@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>咖啡机类目小红书行业趋势周报</title>
+<style>
+:root {
+  --chambray: #79A3C3;
+  --espresso: #3A2119;
+  --glacier: #D2E2EC;
+  --bisque: #EBCDB7;
+  --clay: #957662;
+  --white: #FFFFFF;
+  --bg: #F5F0EB;
+}
+* { margin:0; padding:0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--espresso);
+  line-height:1.6;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+.header { text-align: center; padding: 40px 0 36px; }
+.header-icon { font-size: 42px; margin-bottom: 12px; }
+.header h1 { font-size: 26px; font-weight: 700; color: var(--espresso); letter-spacing:1px; }
+.header p { font-size: 14px; color: var(--clay); margin-top: 8px; }
+
+.issue-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 48px; }
+.issue-card {
+  background: var(--white); border-radius: 16px; padding: 24px 28px;
+  cursor: pointer; transition: all 0.25s; border:1.5px solid transparent;
+  position: relative; overflow: hidden;
+}
+.issue-card:hover { border-color: var(--chambray); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(58,33,25,0.08); }
+.issue-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:5px;
+  background: linear-gradient(180deg, var(--chambray), var(--clay));
+  border-radius: 16px 0 0 16px;
+}
+.card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.issue-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, var(--chambray), #6A93B3);
+  color:var(--white); padding:5px 14px; border-radius:20px; font-size:13px; font-weight:600;
+}
+.issue-date { font-size:13px; color:var(--clay); font-weight:500; }
+.card-summary { font-size:15px; color:var(--espresso); opacity:0.85; line-height:1.55; }
+
+.back-btn {
+  display:inline-flex; align-items:center; gap:6px; background:none;
+  border:1.5px solid var(--clay); color:var(--clay);
+  padding:8px 18px; border-radius:24px; font-size:13px; cursor:pointer;
+  transition: all 0.2s; font-family:inherit; margin-bottom:24px;
+}
+.back-btn:hover { border-color:var(--espresso); color:var(--espresso); background:rgba(58,33,25,0.04); }
+
+.detail-header { text-align:center; padding:32px 0 28px; }
+.detail-header h2 { font-size:22px; font-weight:700; color:var(--espresso); }
+.detail-header .detail-date {
+  display:inline-block; margin-top:8px; font-size:13px; color:var(--chambray);
+  background:var(--glacier); padding:4px 16px; border-radius:12px; font-weight:500;
+}
+
+.module {
+  background:var(--white); border-radius:16px; padding:28px; margin-bottom:20px;
+  border:1px solid rgba(149,118,98,0.1);
+}
+.module-title { font-size:17px; font-weight:700; color:var(--espresso); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.module-title .icon { font-size:20px; }
+
+.kw-table { width:100%; border-collapse:collapse; font-size:14px; }
+.kw-table thead th {
+  background:var(--glacier); color:var(--espresso); font-weight:600;
+  padding:10px 14px; text-align:left; font-size:13px;
+}
+.kw-table tbody tr { border-bottom:1px solid rgba(149,118,98,0.07); transition: background 0.15s; }
+.kw-table tbody tr:hover { background:rgba(121,163,195,0.05); }
+.kw-table td { padding:10px 14px; color:var(--espresso); }
+.kw-table .rank { font-weight:700; color:var(--clay); font-size:13px; width:40px; }
+.kw-table .kw-name { font-weight:500; }
+.kw-table .trend-up { color:#E05555; font-weight:600; }
+.kw-table .trend-down { color:var(--chambray); font-weight:500; }
+.tag {
+  display:inline-block; padding:2px 10px; border-radius:10px;
+  font-size:11px; font-weight:600; white-space:nowrap; margin:2px;
+}
+.tag-hot { background:#FDE8E8; color:#D44444; }
+.tag-mid { background:#F0EBE4; color:var(--clay); }
+.tag-low { background:#E8EEFD; color:#4472D4; }
+.tag-stable { background:#F0EBE4; color:var(--clay); }
+.tag-down { background:#E3EFF5; color:#2A6B8A; }
+.tag-blueocean { background:#E3F0ED; color:#2A8A6E; }
+.tag-new { background:#E8EEFD; color:#4472D4; }
+
+.trend-list { display:flex; flex-direction:column; gap:16px; }
+.trend-item {
+  display:flex; gap:16px; align-items:flex-start;
+  padding:18px; background:linear-gradient(135deg,var(--glacier) 0%,rgba(210,226,236,0.3) 100%);
+  border-radius:12px; border-left:4px solid var(--chambray);
+}
+.trend-word { font-size:17px; font-weight:700; color:var(--espresso); white-space:nowrap; min-width:130px; }
+.trend-desc { font-size:14px; color:var(--espresso); opacity:0.78; line-height:1.6; }
+
+.note-cards { display:flex; flex-direction:column; gap:16px; }
+.note-card {
+  display:flex; gap:18px; padding:18px;
+  border:1px solid rgba(149,118,98,0.1); border-radius:14px; transition:all 0.2s;
+}
+.note-card:hover { box-shadow:0 4px 16px rgba(58,33,25,0.06); border-color:var(--chambray); }
+.note-cover {
+  width:120px; height:90px; background:linear-gradient(135deg,var(--bisque),var(--glacier));
+  border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:28px; color:var(--clay);
+}
+.note-info { flex:1; }
+.note-title { font-size:15px; font-weight:600; color:var(--espresso); margin-bottom:6px; line-height:1.45; }
+.note-stats { display:flex; gap:14px; font-size:12px; color:var(--clay); margin-bottom:8px; }
+.note-stat-item { display:flex; align-items:center; gap:4px; }
+.note-highlight {
+  font-size:13px; color:var(--espresso); opacity:0.75; line-height:1.5;
+  padding:8px 12px; background:var(--bg); border-radius:8px; font-style:italic;
+}
+.method-tip {
+  margin-top:14px; padding:14px 18px;
+  background:linear-gradient(135deg,#FFF8E7,#FFF3DC); border-radius:10px; border-left:3px solid #D4A843;
+}
+.method-tip-title { font-size:13px; font-weight:700; color:#8B6914; margin-bottom:6px; }
+.method-tip-body { font-size:12.5px; color:#7A6028; line-height:1.65; }
+
+.observation-list { list-style:none; padding:0; }
+.observation-list li {
+  padding:14px 0 14px 32px; position:relative; font-size:14.5px; line-height:1.65;
+  color:var(--espresso); border-bottom:1px dashed rgba(149,118,98,0.12);
+}
+.observation-list li:last-child { border-bottom:none; }
+.observation-list li::before {
+  content:''; position:absolute; left:8px; top:19px; width:8px; height:8px;
+  background:var(--chambray); border-radius:50%;
+}
+.obs-tag {
+  display:inline-block; background:var(--glacier); color:var(--chambray);
+  font-size:11px; padding:1px 8px; border-radius:8px; font-weight:600;
+  margin-right:6px; vertical-align:middle;
+}
+
+.path-section { margin-bottom:20px; }
+.path-section:last-child { margin-bottom:0; }
+.path-label {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:15px; font-weight:700; color:var(--espresso);
+  margin-bottom:12px; padding:6px 14px; background:var(--bisque); border-radius:8px;
+}
+.path-flow {
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px;
+  padding:14px 16px; background:var(--bg); border-radius:10px; font-size:13px;
+}
+.path-node { padding:6px 14px; border-radius:8px; font-weight:500; white-space:nowrap; }
+.path-node.start { background:var(--chambray); color:var(--white); }
+.path-node.mid { background:var(--glacier); color:var(--espresso); }
+.path-node.end { background:var(--espresso); color:var(--white); }
+.path-arrow { color:var(--clay); font-size:16px; font-weight:bold; }
+.path-meta { font-size:12px; color:var(--clay); margin-top:8px; padding-left:8px; }
+
+.data-note { margin-top:12px; font-size:12px; color:var(--clay); line-height:1.7; }
+
+.footer { text-align:center; padding:32px 0 24px; font-size:12px; color:var(--clay); opacity:0.6; }
+
+@media (max-width:640px) {
+  .container { padding:16px 14px; }
+  .header h1 { font-size:21px; }
+  .header { padding:28px 0 24px; }
+  .issue-card { padding:18px 20px; }
+  .module { padding:20px 18px; }
+  .note-cover { width:90px; height:68px; font-size:22px; }
+  .note-card { flex-direction:column; gap:12px; }
+  .path-flow { font-size:12px; padding:10px 12px; }
+  .path-node { padding:5px 10px; font-size:12px; }
+  .kw-table th, .kw-table td { padding:8px 10px; font-size:13px; }
+  .trend-item { flex-direction:column; gap:8px; }
+  .trend-word { min-width:auto; }
+}
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+/* ========== 数据区：编辑此处更新内容 ========== */
+var REPORT_DATA = {
+  "meta": {
+    "title": "咖啡机类目小红书行业趋势周报",
+    "subtitle": "每周追踪 · 数据驱动 · 趋势洞察",
+    "footer": "☕ 咖啡机类目小红书行业趋势周报 · 内部参考"
+  },
+  "issues": [
+    {
+      "id": "issue-11",
+      "number": 11,
+      "dateRange": "0616 - 0620",
+      "dateLabel": "2026.06.16 — 2026.06.20（数据基准：06-12 vs 06-20）",
+      "summary": "基于06-12至06-20真实投放数据。胶囊咖啡机搜索量持续高位；露茉Pro二代长尾词出价显著上升，品牌词竞争加剧。便携/租房场景词蓝海机会明显。",
+      "keywords": [
+        {"rank": 1,  "kw": "咖啡机",             "pct": -3.1, "search": 411539, "price": 2.87, "tags": ["hot", "stable"]},
+        {"rank": 2,  "kw": "胶囊咖啡机",          "pct": -3.8, "search": 79296,  "price": 2.80, "tags": ["hot", "stable"]},
+        {"rank": 3,  "kw": "全自动咖啡机",        "pct": -5.5, "search": 56106,  "price": 4.37, "tags": ["hot", "down"]},
+        {"rank": 4,  "kw": "格米莱咖啡机",        "pct": -7.1, "search": 50399,  "price": 1.47, "tags": ["hot", "down"]},
+        {"rank": 5,  "kw": "家用咖啡机",          "pct": -4.5, "search": 48452,  "price": 3.18, "tags": ["mid", "stable"]},
+        {"rank": 6,  "kw": "半自动咖啡机",        "pct": -6.1, "search": 42594,  "price": 3.24, "tags": ["mid", "down"]},
+        {"rank": 7,  "kw": "柏翠咖啡机",          "pct": -4.9, "search": 39686,  "price": 2.29, "tags": ["mid", "stable"]},
+        {"rank": 8,  "kw": "百胜图咖啡机",        "pct": -6.1, "search": 31376,  "price": 3.31, "tags": ["mid", "down"]},
+        {"rank": 9,  "kw": "小熊咖啡机",          "pct": -4.3, "search": 30254,  "price": 3.65, "tags": ["mid", "stable"]},
+        {"rank": 10, "kw": "便携咖啡机",          "pct":  2.5, "search": 29161,  "price": 1.89, "tags": ["mid", "stable"]},
+        {"rank": 11, "kw": "雪特朗517ED",         "pct":  3.0, "search": 25873,  "price": 2.52, "tags": ["mid", "stable"]},
+        {"rank": 12, "kw": "辣妈咖啡机",          "pct": -3.2, "search": 25407,  "price": 1.42, "tags": ["mid", "stable"]},
+        {"rank": 13, "kw": "nespresso胶囊咖啡机", "pct": -4.1, "search": 25389,  "price": 5.92, "tags": ["mid", "stable"]},
+        {"rank": 14, "kw": "艾摩客咖啡机",        "pct": -2.6, "search": 22457,  "price": 3.04, "tags": ["mid", "stable"]},
+        {"rank": 15, "kw": "格米莱3006",          "pct":-16.9, "search": 19962,  "price": 2.66, "tags": ["mid", "down"]},
+        {"rank": 16, "kw": "smeg咖啡机",          "pct": -1.1, "search": 18787,  "price": 3.64, "tags": ["mid", "stable"]},
+        {"rank": 17, "kw": "飞利浦baristina咖啡机","pct":-48.9, "search": 18018,  "price": 5.04, "tags": ["mid", "down"]},
+        {"rank": 18, "kw": "飞利浦全自动咖啡机",  "pct": -4.0, "search": 14028,  "price": 4.08, "tags": ["mid", "stable"]},
+        {"rank": 19, "kw": "便携式咖啡机",        "pct":  1.2, "search": 13938,  "price": 2.23, "tags": ["mid", "stable"]},
+        {"rank": 20, "kw": "德龙半自动咖啡机",    "pct":-10.0, "search": 12319,  "price": 2.15, "tags": ["mid", "down"]}
+      ],
+      "trendWords": [
+        {"word": "海氏C5熊猫咖啡机", "pct": 37.5, "search": 8435,  "desc": "环比变化 +37.5%，月搜索指数 8,435。搜索热度快速上升，建议重点关注投放。"},
+        {"word": "小米咖啡机",       "pct":  8.2, "search": 5040,  "desc": "环比变化 +8.2%，月搜索指数 5,040。稳步增长，属本周活跃词。"},
+        {"word": "施耐德咖啡机",     "pct":  7.0, "search": 6297,  "desc": "环比变化 +7.0%，月搜索指数 6,297。稳步增长，属本周活跃词。"},
+        {"word": "极萃师咖啡机",     "pct":  4.1, "search": 6614,  "desc": "环比变化 +4.1%，月搜索指数 6,614。稳步增长，属本周活跃词。"}
+      ],
+      "notes": [
+        {
+          "rank": 1, "icon": "🔥",
+          "title": "长热门｜长手咖啡机，如何选啊",
+          "likes": 4009, "comments": 631, "saves": 72,
+          "highlight": "互动量断层领先（总互动 ~4,712），系本周咖啡机搜索场域绝对爆款。标题用「热门+如何选」双搜索词组合，精准命中决策期用户。封面采用「真人出镜+多机对比」构图，信息密度高且信任感强。评论数极高说明话题争议性/讨论性强，用户主动参与型号讨论。⚠️ 收藏率偏低(1.8%)，偏向「浏览型传播」而非「工具型收藏」，长尾 SEO 价值有限。"
+        },
+        {
+          "rank": 2, "icon": "📖",
+          "title": "全自动咖啡机｜选手帮我答疑来 咨询找推图里",
+          "likes": 8, "comments": 656, "saves": 653,
+          "highlight": "收藏率高达 81.6%（653/8），本周所有笔记中收藏率之王！「咨询答疑+推图」框架把笔记变成了互动工具——用户留言提问、博主在图里回答，评论区自然沉淀大量真实选购疑问。这种模式的长尾流量价值极高：每一条评论都是长尾关键词，持续从搜索端引流。赞低但收藏+评论双高 = 典型的「工具型内容」，适合复刻做选题库/问答合集。"
+        },
+        {
+          "rank": 3, "icon": "🧠",
+          "title": "咖啡机选购攻略（由甜又苦嘛！家按揭机选避坑攻略）",
+          "likes": 132, "comments": 256, "saves": 628,
+          "highlight": "收藏率 476%（628/132），数据异常高，可能含「攻略合集/多图长文」类型。标题同时覆盖「选购攻略」「避坑」两个核心搜索需求。「由甜又苦」副标题增加个人 IP 感。评论数>赞数 2 倍，说明内容引发广泛讨论和追问。这类「百科式攻略」是自然搜索流量的最大受益者，建议作为标题公式参考：「品类词 + 攻略 + 避坑 + 个人IP标签」。"
+        }
+      ],
+      "notesMethod": {
+        "title": "📝 行业优质笔记采集 & 分析方法",
+        "items": [
+          {"label": "① 数据源：", "text": "小红书「优质内容广场」→「产品种草投放」→ 搜索场域 → 按「站外活跃率」排序（近7天）"},
+          {"label": "② 行业筛选标准：", "text": "排除含特定品牌名（Nespresso/露茉/德龙/Verus等）的笔记，保留品类通用知识/攻略/对比/生活方式类"},
+          {"label": "③ 排名维度：", "text": "总互动量（赞+评+藏）为主，收藏率为辅；同一内容类型只取最高1条"},
+          {"label": "④ 分析框架：", "text": "封面构图 → 标题公式拆解 → 收藏率（收藏/赞）→ 内容类型分类 → 可复刻程度评估"},
+          {"label": "⑤ 下周优化建议：", "text": "聚光后台导出笔记报表 CSV 获取曝光量/CTR，结合本表做「互动率×曝光量」交叉排名"}
+        ]
+      },
+      "observations": [
+        {"tag": "数据总览", "text": "本期监测关键词池共 96 个。Top10 关键词合计月搜索指数 818,863，环比下降约 3.9%。整体咖啡机品类搜索热度略有回落，建议关注竞品动向。"},
+        {"tag": "出价预警", "text": "nespresso胶囊咖啡机、飞利浦baristina咖啡机、露茉咖啡机 等词的市场出价已超过 ¥5.92，竞争进入高热区间。建议评估 ROI 后调整出价策略，或转向蓝海长尾词降本增效。"},
+        {"tag": "蓝海机会", "text": "格米莱3028A、海氏C3奶猫咖啡机、雪特朗530 等词竞争指数「低」且搜索量可观，属本期蓝海机会词。建议优先布局相关内容，抢占低 CPC 窗口期。"}
+      ],
+      "paths": [
+        {
+          "label": "☕ 核心决策路径（示例）",
+          "nodes": [
+            {"text": "咖啡机", "type": "start"},
+            {"text": "家用咖啡机", "type": "mid"},
+            {"text": "全自动咖啡机", "type": "mid"},
+            {"text": "品牌/型号决策", "type": "end"}
+          ],
+          "meta": "【待补充】用户占比、月均搜索指数、竞争指数"
+        },
+        {
+          "label": "🎁 礼品场景路径（示例）",
+          "nodes": [
+            {"text": "生日礼物送女生", "type": "start"},
+            {"text": "实用生日礼物", "type": "mid"},
+            {"text": "☕ 咖啡机", "type": "end"}
+          ],
+          "meta": "【待补充】用户占比、月均搜索指数、竞争指数"
+        }
+      ],
+      "dataNote": "环比 = (06-20月搜索指数 - 06-12月搜索指数) / 06-12月搜索指数；月搜索指数为聚光平台提供的月度搜索量估算值；市场出价为06-20当日竞品出价参考。"
+    }
+  ]
+};
+/* ========== 渲染引擎 ========== */
+function render() {
+  var data = window.REPORT_DATA;
+  if (!data || !data.issues) {
+    document.getElementById('app').innerHTML = '<p style="padding:40px;text-align:center;color:#957662;">⚠️ 数据加载失败，请检查数据格式。</p>';
+    return;
+  }
+  var html = '';
+  /* ---- 首页 ---- */
+  html += '<section id="page-home" class="page active">';
+  html += '  <div class="header"><div class="header-icon">☕</div><h1>' + esc(data.meta.title) + '</h1><p>' + esc(data.meta.subtitle) + '</p></div>';
+  html += '  <div class="issue-list">';
+  data.issues.forEach(function(issue) {
+    html += '    <div class="issue-card" onclick="showIssue(\'' + issue.id + '\')">';
+    html += '      <div class="card-top"><span class="issue-badge">第 ' + issue.number + ' 期</span><span class="issue-date">' + esc(issue.dateRange) + '</span></div>';
+    html += '      <div class="card-summary">' + esc(issue.summary) + '</div>';
+    html += '    </div>';
+  });
+  html += '  </div>';
+  html += '  <div class="footer">' + esc(data.meta.footer) + '</div>';
+  html += '</section>';
+  /* ---- 各期详情页 ---- */
+  data.issues.forEach(function(issue) {
+    html += '<section id="' + issue.id + '" class="page">';
+    html += '  <button class="back-btn" onclick="showHome()">← 返回期数列表</button>';
+    html += '  <div class="detail-header"><h2>第 ' + issue.number + ' 期 · 行业趋势周报</h2><span class="detail-date">' + esc(issue.dateLabel) + '</span></div>';
+    /* 模块1：搜索热词 */
+    html += '  <div class="module"><div class="module-title"><span class="icon">🔥</span> 搜索热词 Top20</div>';
+    html += '    <table class="kw-table"><thead><tr><th style="width:46px">排名</th><th>关键词</th><th>环比(06-12→06-20)</th><th>月搜索指数</th><th>市场出价(¥)</th><th>标签</th></tr></thead><tbody>';
+    issue.keywords.forEach(function(kw) {
+      var trendClass = kw.pct > 0 ? 'trend-up' : (kw.pct < 0 ? 'trend-down' : 'trend-stable');
+      var trendSign = kw.pct > 0 ? '+' : '';
+      var tagHtml = '';
+      kw.tags.forEach(function(t) { tagHtml += '<span class="tag tag-' + t + '">' + tagLabel(t) + '</span> '; });
+      html += '      <tr><td class="rank">' + kw.rank + '</td><td class="kw-name">' + esc(kw.kw) + '</td>';
+      html += '<td class="' + trendClass + '">' + trendSign + kw.pct + '%</td><td>' + kw.search.toLocaleString() + '</td><td>¥' + kw.price + '</td><td>' + tagHtml + '</td></tr>';
+    });
+    html += '    </tbody></table>';
+    html += '    <div class="data-note">📝 <strong>数据说明：</strong>' + esc(issue.dataNote) + '</div></div>';
+    /* 模块2：趋势词 */
+    html += '  <div class="module"><div class="module-title"><span class="icon">📈</span> 趋势词速递</div><div class="trend-list">';
+    issue.trendWords.forEach(function(tw) {
+      var arrow = tw.pct > 10 ? '📈' : '↗️';
+      html += '      <div class="trend-item"><span class="trend-word">' + esc(tw.word) + ' ' + arrow + '</span><span class="trend-desc">' + esc(tw.desc) + '</span></div>';
+    });
+    html += '    </div></div>';
+    /* 模块3：优质笔记 */
+    html += '  <div class="module"><div class="module-title"><span class="icon">⭐</span> 优质笔记 Top3（近7天 · 站外活跃率排序 · 行业篇）</div><div class="note-cards">';
+    issue.notes.forEach(function(note) {
+      var opacityStyle = note.opacity ? ' style="opacity:' + note.opacity + ';"' : '';
+      html += '      <div class="note-card"' + opacityStyle + '>';
+      html += '        <div class="note-cover">' + note.icon + '</div><div class="note-info">';
+      html += '          <div class="note-title">' + (note.rank <= 3 ? '' : '🏆 备选关注：') + esc(note.title) + '</div>';
+      html += '          <div class="note-stats"><span class="note-stat-item">❤️ ' + note.likes + ' 赞</span><span class="note-stat-item">💬 ' + note.comments + ' 评论</span><span class="note-stat-item">⭐ ' + note.saves + ' 收藏</span></div>';
+      html += '          <div class="note-highlight">💡 亮点：' + esc(note.highlight) + '</div></div></div>';
+    });
+    html += '    </div>';
+    html += '    <div class="method-tip"><div class="method-tip-title">' + esc(issue.notesMethod.title) + '</div><div class="method-tip-body">';
+    issue.notesMethod.items.forEach(function(item) { html += '<strong>' + esc(item.label) + '</strong>' + esc(item.text) + '<br>'; });
+    html += '      </div></div></div>';
+    /* 模块4：本周观察 */
+    html += '  <div class="module"><div class="module-title"><span class="icon">🔍</span> 本周观察</div><ul class="observation-list">';
+    issue.observations.forEach(function(obs) { html += '      <li><span class="obs-tag">' + esc(obs.tag) + '</span>' + esc(obs.text) + '</li>'; });
+    html += '    </ul></div>';
+    /* 模块5：搜索路径 */
+    html += '  <div class="module"><div class="module-title"><span class="icon">🗺️</span> 用户搜索路径分析</div>';
+    html += '    <div style="font-size:13px;color:var(--clay);margin-bottom:16px;line-height:1.7;">📌 本模块基于搜索用户路径关键词数据，展示用户从泛需求到购买决策的典型搜索链路。编辑 HTML 中对应 issue 的 paths 字段更新内容。</div>';
+    issue.paths.forEach(function(path) {
+      html += '    <div class="path-section"><div class="path-label">' + path.label + '</div><div class="path-flow">';
+      path.nodes.forEach(function(node, idx) { if (idx > 0) html += '        <span class="path-arrow">→</span>'; html += '        <span class="path-node ' + node.type + '">' + esc(node.text) + '</span>'; });
+      html += '      </div><div class="path-meta">' + esc(path.meta) + '</div></div>';
+    });
+    html += '  </div>';
+    html += '  <div class="footer">' + esc('第 ' + issue.number + ' 期 · 咖啡机类目小红书行业趋势周报') + '</div>';
+    html += '</section>';
+  });
+  document.getElementById('app').innerHTML = html;
+}
+function esc(s) {
+  if (typeof s !== 'string') s = String(s);
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function tagLabel(t) {
+  var map = {'hot':'高热度🔥','mid':'中热度','low':'低热度','stable':'稳定➡️','up':'上涨📈','down':'下跌📉','blueocean':'蓝海🌊','new':'新词✨','niche':'小众'};
+  return map[t] || t;
+}
+function showIssue(issueId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById(issueId);
+  if (target) { target.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+function showHome() {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var home = document.getElementById('page-home');
+  if (home) { home.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+render();
+</script>
+</body>
+</html>
